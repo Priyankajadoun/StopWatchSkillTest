@@ -6,7 +6,7 @@ var reset = document.getElementById('reset');
 var sec = 0;
 var min = 0;
 var hour = 0;
-var id; 
+var id = null; 
 
 function stopWatch() {
     // Format seconds, minutes, and hours
@@ -32,12 +32,18 @@ function stopWatch() {
 
 
 //  Define handleStart , handleStop and handleReset Functions
-function handleStart(){
-    // Update the display element every second
-     id = setInterval(function () {
-        display.innerText = stopWatch();
-    }, 1000);
+
+
+function handleStart() {
+    // Check if an interval is already active
+    if (id === null) {
+        // Create a new interval to update the display
+        id = setInterval(function () {
+            display.innerText = stopWatch();
+        }, 1000);
+    }
 }
+
 function handleStop(){
     clearInterval(id);
     console.log("stop");
@@ -46,6 +52,7 @@ function handleReset(){
   sec = 0 ; 
   min = 0;
   hour =0;
+  id = null;
   clearInterval(id);
   display.innerText ="00:00:00";
 
