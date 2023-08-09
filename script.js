@@ -7,8 +7,20 @@ var sec = 0;
 var min = 0;
 var hour = 0;
 var id = null; 
+var pausedTime = 0; // Store the time when the stopwatch is paused
 
 function stopWatch() {
+     // Increment seconds and adjust minutes and hours if necessary
+     sec++;
+     if (sec > 60) {
+         min++;
+         sec = 0;
+     }
+     if (min > 60) {
+         hour++;
+         min = 0;
+         sec = 0;
+     }
     // Format seconds, minutes, and hours
     var formattedSec = sec < 10 ? "0" + sec : sec;
     var formattedMin = min < 10 ? "0" + min : min;
@@ -16,17 +28,7 @@ function stopWatch() {
     // Construct the time string in "hh:mm:ss" format
     var time = formattedHour + ":" + formattedMin + ":" + formattedSec;
     console.log(time);
-    // Increment seconds and adjust minutes and hours if necessary
-    sec++;
-    if (sec > 60) {
-        min++;
-        sec = 0;
-    }
-    if (min > 60) {
-        hour++;
-        min = 0;
-        sec = 0;
-    }
+   
     return time;
 }
 
@@ -37,24 +39,36 @@ function stopWatch() {
 function handleStart() {
     // Check if an interval is already active
     if (id === null) {
-        // Create a new interval to update the display
+        // Adjust the start time based on the paused time
+        var now = new Date().getTime();
+        var startTime = now - pausedTime;
+        
         id = setInterval(function () {
+            var currentTime = new Date().getTime();
+            var elapsedTime = Math.floor((currentTime - startTime) / 1000) + pausedTime;
+
+            // Update the stopwatch display
             display.innerText = stopWatch();
+
+            // Store the paused time for adjustments when starting again
+            pausedTime = elapsedTime;
         }, 1000);
     }
 }
 
 function handleStop(){
     clearInterval(id);
+    id = null;
     console.log("stop");
 }
 function handleReset(){
-  sec = 0 ; 
-  min = 0;
-  hour =0;
-  id = null;
-  clearInterval(id);
-  display.innerText ="00:00:00";
+    clearInterval(id);
+    id = null;
+    pausedTime = 0;
+    sec = 0;
+    min = 0;
+    hour = 0;
+    display.innerText = "00:00:00";
 
 }
 // Call the event listeners
